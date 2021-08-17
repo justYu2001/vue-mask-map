@@ -24,7 +24,7 @@
                 <p>{{ pharmacy["mask_child"] }}</p>
                 <h4>最後更新時間</h4>
                 <p>{{ pharmacy.updated }}</p>
-                <button :class="$style.info">詳細資訊</button>
+                <button :class="$style.info" @click="openInfoBox(pharmacy.id)">詳細資訊</button>
             </li>
         </ul>
     </div>
@@ -45,7 +45,7 @@ export default {
         SearchBar,
     },
     computed: {
-        ...mapState(["currentCity", "currentDistrict", "keyword"]),
+        ...mapState(["currentCity", "currentDistrict", "keyword", "infoBoxPharmacyId"]),
         ...mapGetters(["cityList", "districtList", "filteredPharmacies"]),
     },
     watch: {
@@ -64,6 +64,10 @@ export default {
             const keywordHtml = `<span>${this.keyword}</span>`;
             const regExp = new RegExp(this.keyword, "g");
             return string.replace(regExp, keywordHtml);
+        },
+        openInfoBox(id){
+            this.$store.commit("setInfoBoxPharmacyId", id);
+            this.$store.commit("setModalShow", true);
         }
     },
 };

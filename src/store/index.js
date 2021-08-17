@@ -7,6 +7,8 @@ export default createStore({
         location: [],
         pharmacies: [],
         keyword: "",
+        modalShow: false,
+        infoBoxPharmacyId: "",
     },
     getters: {
         cityList(state) {
@@ -51,6 +53,12 @@ export default createStore({
         },
         setKeyword(state, payload) {
             state.keyword = payload;
+        },
+        setModalShow(state, payload) {
+            state.modalShow = payload;
+        },
+        setInfoBoxPharmacyId(state, payload){
+            state.infoBoxPharmacyId = payload;
         },
     },
     actions: {
