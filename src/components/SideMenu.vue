@@ -17,7 +17,7 @@
         </div>
         <ul :class="$style['pharmacy-list']">
             <li :class="$style.pharmacy" v-for="pharmacy in filteredPharmacies" :key="pharmacy.id">
-                <h3 v-html="highlightKeyword(pharmacy.name)"></h3>
+                <h3 :class="$style.highlight" v-html="highlightKeyword(pharmacy.name)"></h3>
                 <h4>成人口罩</h4>
                 <p>{{ pharmacy["mask_adult"] }}</p>
                 <h4>兒童口罩</h4>
@@ -61,7 +61,7 @@ export default {
             this.$store.commit("setCurrentDistrict", dsitrict);
         },
         highlightKeyword(string){
-            const keywordHtml = `<span class="highlight">${this.keyword}</span>`;
+            const keywordHtml = `<span>${this.keyword}</span>`;
             const regExp = new RegExp(this.keyword, "g");
             return string.replace(regExp, keywordHtml);
         }
@@ -126,10 +126,8 @@ export default {
         cursor: pointer;
     }
 }
-</style>
 
-<style lang="scss">
-.highlight{
+.highlight span{
     color: $primary;
 }
 </style>
