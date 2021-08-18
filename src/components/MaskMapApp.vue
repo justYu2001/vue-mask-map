@@ -14,7 +14,8 @@ import SideMenu from "../components/SideMenu.vue";
 import LightBox from "../components/LightBox.vue";
 import Map from "../components/Map.vue";
 
-import { mapActions } from "vuex";
+import { onMounted, ref } from 'vue';
+import { useStore } from "vuex";
 
 export default {
     name: "MaskMapApp",
@@ -23,15 +24,19 @@ export default {
         LightBox,
         Map,
     },
-    methods: {
-        ...mapActions(["fetchLocations", "fetchPharmacies"]),
-        openPopup(id){
-            this.$refs.map.tiggerPopup(id);
+    setup() {
+        const store = useStore();
+
+        store.dispatch("fetchLocations");
+        store.dispatch("fetchPharmacies");
+
+        const map = ref(null);
+        const openPopup = (id) => map.value.tiggerPopup(id);
+        
+        return{
+            map,
+            openPopup,
         }
-    },
-    created() {
-        this.fetchLocations();
-        this.fetchPharmacies();
     },
 };
 </script>

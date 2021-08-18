@@ -4,30 +4,19 @@
 
 <script>
 import L from "leaflet";
-import { mapGetters } from "vuex";
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex';
 
 export default {
     name: "Map",
-    data() {
-        return {
-            map: {},
-            markers: [],
-        };
-    },
-    computed: {
-        ...mapGetters(["currentDistrictInfo", "filteredPharmacies"]),
-    },
-    watch: {
-        currentDistrictInfo(district) {
-            this.map.panTo(new L.LatLng(district.latitude, district.longitude));
-        },
-        filteredPharmacies(pharmacies) {
-            this.clearMarkers();
-            pharmacies.forEach((pharmacy) => this.addMaker(pharmacy));
-        },
-    },
-    methods: {
-        addMaker(pharmacy) {
+    setup() {
+        const store = useStore();
+
+        const map = ref({});
+
+        const markers = reactive([]);
+
+        const addMaker = (pharmacy) => {
             const icon = L.icon({
                 iconUrl: require("../assets/images/placeholder.png"),
                 iconSize: [40, 40],
@@ -37,36 +26,54 @@ export default {
             const marker = L.marker([pharmacy.longitude, pharmacy.latitude], {
                 icon
             });
-            marker.addTo(this.map);
+            marker.addTo(map.value);
             marker.bindPopup(`<h2 class="popup">${pharmacy.name}</h2>`);
             marker.id = pharmacy.id;
             marker.latitude = pharmacy.latitude;
             marker.longitude = pharmacy.longitude;
-            this.markers.push(marker);
-        },
-        clearMarkers(){
-            this.map.eachLayer((layer) => {
+            markers.push(marker);
+        };
+
+        const clearMarkers = () => {
+            map.value.eachLayer((layer) => {
                 if(layer instanceof L.Marker){
-                    this.map.removeLayer(layer);
+                    map.value.removeLayer(layer);
                 }
             });
-            this.markers = [];
-        },
-        tiggerPopup(id){
-            const marker = this.markers.find((marker) => marker.id === id);
-            this.map.flyTo(new L.LatLng(marker.longitude, marker.latitude), 15);
+            markers.length = 0;
+        };
+
+        const tiggerPopup = (id) => {
+            const marker = markers.find((marker) => marker.id === id);
+            map.value.flyTo(new L.LatLng(marker.longitude, marker.latitude), 15);
             marker.openPopup();
         }
-    },
-    mounted() {
-        this.map = L.map("mapid").setView([25.03, 121.55], 14);
-        const url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-        const attribution =
-            '<a href="https://www.openstreetmap.org/" target="_blank">© OpenStreetMap 貢獻者</a>';
-        L.tileLayer(url, {
-            attribution,
-            maxZoom: 18,
-        }).addTo(this.map);
+
+        const currentDistrictInfo = computed(() => store.getters.currentDistrictInfo);
+        watch(currentDistrictInfo, (district) => {
+            map.value.panTo(new L.LatLng(district.latitude, district.longitude));
+        });
+
+        const filteredPharmacies = computed(() => store.getters.filteredPharmacies);
+        watch(filteredPharmacies, (pharmacies) => {
+            clearMarkers();
+            pharmacies.forEach((pharmacy) => addMaker(pharmacy));
+        })
+
+        onMounted(() => {
+            map.value = L.map("mapid").setView([25.03, 121.55], 14);
+            const url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+            const attribution =
+                '<a href="https://www.openstreetmap.org/" target="_blank">© OpenStreetMap 貢獻者</a>';
+            L.tileLayer(url, {
+                attribution,
+                maxZoom: 18,
+            }).addTo(map.value);
+        });
+
+        return {
+            tiggerPopup,
+        }
     },
 };
 </script>

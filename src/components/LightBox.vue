@@ -85,25 +85,28 @@
 <script>
 import "@/assets/images/check.svg";
 
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex';
+
 export default {
     name: "LightBox",
-    computed: {
-        modalShow: {
-            get() {
-                return this.$store.state.modalShow;
-            },
-            set(val) {
-                this.$store.commit("setModalShow", val);
-            },
-        },
-        currentPharmacy() {
-            const { pharmacies, infoBoxPharmacyId } = this.$store.state;
+    setup() {
+        const store = useStore();
+
+        const modalShow = computed({
+            get: () => store.state.modalShow,
+            set: (val) => store.commit("setModalShow", val),
+        });
+
+        const currentPharmacy = computed(() => {
+            const { pharmacies, infoBoxPharmacyId } = store.state;
             return pharmacies.find(
                 (pharmacy) => pharmacy.id === infoBoxPharmacyId
             );
-        },
-        servicePeriods() {
-            let servicePeriods = this.currentPharmacy?.["service_periods"] || "";
+        });
+
+        const servicePeriods = computed(() => {
+            let servicePeriods = currentPharmacy.value?.["service_periods"] || "";
             servicePeriods = [...servicePeriods].map((symbol) =>
                 symbol === "N" ? true : false
             );
@@ -112,13 +115,21 @@ export default {
                 servicePeriods.slice(7, 14),
                 servicePeriods.slice(14, 21),
             ];
-        },
-        phoneLink(){
-            let phone = this.currentPharmacy?.phone || "";
+        });
+
+        const phoneLink = computed(() => {
+            let phone = currentPharmacy.value?.phone || "";
             const firstZeroIndex = phone.indexOf("0");
             const rightBrackerIndex = phone.indexOf(")");
             const areaCode = phone.slice(firstZeroIndex + 1, rightBrackerIndex);
             return `tel:+886-${areaCode}-${phone.slice(rightBrackerIndex + 1)}`;
+        });
+
+        return{
+            modalShow,
+            currentPharmacy,
+            servicePeriods,
+            phoneLink,
         }
     },
 };
@@ -131,7 +142,7 @@ export default {
     left: 0;
     height: 100vh;
     width: 100%;
-    z-index: 1000;
+    z-index: 2000;
 }
 
 .modal-container {

@@ -20,7 +20,7 @@
                 :class="$style.pharmacy"
                 v-for="pharmacy in filteredPharmacies"
                 :key="pharmacy.id"
-                @click="$emit('tiggerMarkerPopup', pharmacy.id)"
+                @click="tiggerMarkerPopup(pharmacy.id)"
             >
                 <h3
                     :class="$style.highlight"
@@ -46,7 +46,9 @@ import SearchBar from "@/components/SearchBar.vue";
 
 import "@/assets/images/search.svg";
 
-import { mapState, mapGetters } from "vuex";
+import { ref, computed, watch } from 'vue'
+import { useStore } from 'vuex';
+
 
 export default {
     name: "SideMenu",
@@ -55,36 +57,53 @@ export default {
         SearchBar,
     },
     emits: ["tiggerMarkerPopup"],
-    computed: {
-        ...mapState([
-            "currentCity",
-            "currentDistrict",
-            "keyword",
-            "infoBoxPharmacyId",
-        ]),
-        ...mapGetters(["cityList", "districtList", "filteredPharmacies"]),
-    },
-    watch: {
-        districtList(val) {
-            this.$store.commit("setCurrentDistrict", val[0].name);
-        },
-    },
-    methods: {
-        updateCurrentCity(city) {
-            this.$store.commit("setCurrentCity", city);
-        },
-        updateCurrentDistrict(dsitrict) {
-            this.$store.commit("setCurrentDistrict", dsitrict);
-        },
-        highlightKeyword(string) {
-            const keywordHtml = `<span>${this.keyword}</span>`;
-            const regExp = new RegExp(this.keyword, "g");
+    setup(props, { emit }) {
+        const store = useStore();
+
+        const currentCity = computed(() => store.state.currentCity);
+        const cityList = computed(() => store.getters.cityList);
+        const updateCurrentCity = (city) => store.commit("setCurrentCity", city);
+
+        const currentDistrict = computed(() => store.state.currentDistrict);
+        const districtList = computed(() => store.getters.districtList);
+        watch(districtList, (value) => {
+            store.commit("setCurrentDistrict", value[0].name);
+        })
+        const updateCurrentDistrict = (dsitrict) => {
+            store.commit("setCurrentDistrict", dsitrict)
+        };
+
+        const filteredPharmacies = computed(() => store.getters.filteredPharmacies);
+
+        const keyword = computed(() => store.state.keyword);
+        const highlightKeyword = (string) => {
+            const keywordHtml = `<span>${keyword.value}</span>`;
+            const regExp = new RegExp(keyword.value, "g");
             return string.replace(regExp, keywordHtml);
-        },
-        openInfoBox(id) {
-            this.$store.commit("setInfoBoxPharmacyId", id);
-            this.$store.commit("setModalShow", true);
-        },
+        };
+
+        const infoBoxPharmacyId = computed(() => store.state.infoBoxPharmacyId);
+        const openInfoBox = (id) =>{
+            store.commit("setInfoBoxPharmacyId", id);
+            store.commit("setModalShow", true);
+        }
+
+        const tiggerMarkerPopup = (id) => emit("tiggerMarkerPopup", id);
+
+        return{
+            currentCity,
+            cityList,
+            updateCurrentCity,
+            currentDistrict,
+            districtList,
+            updateCurrentDistrict,
+            filteredPharmacies,
+            keyword,
+            highlightKeyword,
+            infoBoxPharmacyId,
+            openInfoBox,
+            tiggerMarkerPopup,
+        }
     },
 };
 </script>
