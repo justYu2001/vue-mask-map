@@ -32,7 +32,7 @@
                 <p>{{ pharmacy["mask_child"] }}</p>
                 <h4>最後更新時間</h4>
                 <p>{{ pharmacy.updated }}</p>
-                <button :class="$style.info" @click="openInfoBox(pharmacy.id)">
+                <button :class="$style.info" @click.stop="openInfoBox(pharmacy.id)">
                     詳細資訊
                 </button>
             </li>
