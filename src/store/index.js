@@ -37,6 +37,11 @@ export default createStore({
             }
             return filteredPharmacies;
         },
+        currentDistrictInfo(state, getters) {
+            return getters.districtList.find(
+                (district) => district.name === state.currentDistrict
+            );
+        },
     },
     mutations: {
         setCurrentCity(state, payload) {
@@ -57,7 +62,7 @@ export default createStore({
         setModalShow(state, payload) {
             state.modalShow = payload;
         },
-        setInfoBoxPharmacyId(state, payload){
+        setInfoBoxPharmacyId(state, payload) {
             state.infoBoxPharmacyId = payload;
         },
     },

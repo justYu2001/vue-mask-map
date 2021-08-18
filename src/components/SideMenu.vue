@@ -13,18 +13,28 @@
             />
         </div>
         <div :class="$style.search">
-            <SearchBar/>
+            <SearchBar />
         </div>
         <ul :class="$style['pharmacy-list']">
-            <li :class="$style.pharmacy" v-for="pharmacy in filteredPharmacies" :key="pharmacy.id">
-                <h3 :class="$style.highlight" v-html="highlightKeyword(pharmacy.name)"></h3>
+            <li
+                :class="$style.pharmacy"
+                v-for="pharmacy in filteredPharmacies"
+                :key="pharmacy.id"
+                @click="$emit('tiggerMarkerPopup', pharmacy.id)"
+            >
+                <h3
+                    :class="$style.highlight"
+                    v-html="highlightKeyword(pharmacy.name)"
+                ></h3>
                 <h4>成人口罩</h4>
                 <p>{{ pharmacy["mask_adult"] }}</p>
                 <h4>兒童口罩</h4>
                 <p>{{ pharmacy["mask_child"] }}</p>
                 <h4>最後更新時間</h4>
                 <p>{{ pharmacy.updated }}</p>
-                <button :class="$style.info" @click="openInfoBox(pharmacy.id)">詳細資訊</button>
+                <button :class="$style.info" @click="openInfoBox(pharmacy.id)">
+                    詳細資訊
+                </button>
             </li>
         </ul>
     </div>
@@ -44,8 +54,14 @@ export default {
         SideMenuDropDown,
         SearchBar,
     },
+    emits: ["tiggerMarkerPopup"],
     computed: {
-        ...mapState(["currentCity", "currentDistrict", "keyword", "infoBoxPharmacyId"]),
+        ...mapState([
+            "currentCity",
+            "currentDistrict",
+            "keyword",
+            "infoBoxPharmacyId",
+        ]),
         ...mapGetters(["cityList", "districtList", "filteredPharmacies"]),
     },
     watch: {
@@ -60,15 +76,15 @@ export default {
         updateCurrentDistrict(dsitrict) {
             this.$store.commit("setCurrentDistrict", dsitrict);
         },
-        highlightKeyword(string){
+        highlightKeyword(string) {
             const keywordHtml = `<span>${this.keyword}</span>`;
             const regExp = new RegExp(this.keyword, "g");
             return string.replace(regExp, keywordHtml);
         },
-        openInfoBox(id){
+        openInfoBox(id) {
             this.$store.commit("setInfoBoxPharmacyId", id);
             this.$store.commit("setModalShow", true);
-        }
+        },
     },
 };
 </script>
@@ -86,38 +102,45 @@ export default {
     display: flex;
     justify-content: center;
 }
-.search{
+.search {
     padding: 30px 44px;
     border-bottom: 1px solid $gray;
 }
 
-.pharmacy-list{
+.pharmacy-list {
     flex-grow: 1;
     overflow-y: scroll;
     @include custom-scrollbar;
 }
 
-.pharmacy{
+.pharmacy {
     position: relative;
     padding: 10px 20px;
     border-bottom: 1px solid $gray;
-    h4{
+    cursor: pointer;
+
+    &:hover{
+        background-color: #e3e3e3;
+    }
+
+    h4 {
         font-size: $h4-font-size;
-        padding-top: 5px;
+        padding-top: 10px;
         padding-left: 1px;
         font-weight: $font-weight-regular;
     }
-    h3{
+    h3 {
         font-size: $h3-font-size;
         font-weight: $font-weight-medium;
-        padding: 10px 0;
+        padding-top: 10px;
+        padding-bottom: 5px;
     }
-    p{
-        padding-top: 3px;
+    p {
+        padding-top: 5px;
         padding-left: 1px;
         font-weight: $font-weight-medium;
     }
-    .info{
+    .info {
         position: absolute;
         right: 20px;
         bottom: 10px;
@@ -131,7 +154,7 @@ export default {
     }
 }
 
-.highlight span{
+.highlight span {
     color: $primary;
 }
 </style>

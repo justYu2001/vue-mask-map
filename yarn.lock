@@ -6877,6 +6877,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"leaflet@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "leaflet@npm:1.7.1"
+  checksum: f69149ab482eeb6cdabd837939c4782c97a7a18bc0b2a9330d4a828ca0dc6e035981f2ecdb71c6646aa173bc369cd3b4fd6bbe5d81df4c59c45254f9e9361d03
+  languageName: node
+  linkType: hard
+
 "lines-and-columns@npm:^1.1.6":
   version: 1.1.6
   resolution: "lines-and-columns@npm:1.1.6"
@@ -11196,6 +11203,7 @@ fsevents@~2.3.2:
     "@vue/cli-service": ~4.5.0
     "@vue/compiler-sfc": ^3.0.0
     core-js: ^3.6.5
+    leaflet: ^1.7.1
     sass: ^1.26.5
     sass-loader: ^8.0.2
     svg-sprite-loader: ^6.0.9

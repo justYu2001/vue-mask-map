@@ -131,6 +131,7 @@ export default {
     left: 0;
     height: 100vh;
     width: 100%;
+    z-index: 1000;
 }
 
 .modal-container {
