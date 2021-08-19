@@ -29,31 +29,39 @@
 import "@/assets/images/chevron-up.svg";
 import "@/assets/images/chevron-down.svg";
 
+import { ref, computed, onMounted } from 'vue'
+
 export default {
     name: "SideMenuDropDown",
-    data() {
-        return {
-            isShow: false,
-        };
-    },
     props: {
         currentOption: String,
         options: Array,
     },
     emits: ["updateOption"],
-    methods: {
-        closeDropdown() {
-            this.isShow = false;
-        },
-        updateOption(option) {
-            this.$emit("updateOption", option);
-            this.closeDropdown();
-        },
-    },
-    mounted() {
-        document.addEventListener("click", () => {
-            this.closeDropdown();
-        }, true);
+    setup(props, { emit }) {
+        const isShow = ref(false);
+        
+        const closeDropdown = () => isShow.value = false;
+
+        const currentOption = computed(() => props.currentOption);
+        const options = computed(() => props.options);
+        const updateOption = (option) =>{
+            emit("updateOption", option);
+            closeDropdown();
+        }
+
+        onMounted(() => {
+            document.addEventListener("click", () => {
+                closeDropdown();
+            }, true);
+        });
+
+        return {
+            isShow,
+            currentOption,
+            options,
+            updateOption,
+        }
     },
 };
 </script>

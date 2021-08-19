@@ -14,7 +14,7 @@ import SideMenu from "../components/SideMenu.vue";
 import LightBox from "../components/LightBox.vue";
 import Map from "../components/Map.vue";
 
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useStore } from "vuex";
 
 export default {

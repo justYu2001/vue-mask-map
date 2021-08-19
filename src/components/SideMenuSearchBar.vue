@@ -2,7 +2,6 @@
     <label :class="[$style.search, { [$style.active]: isFocus }]" @click="isFocus = true">
         <input
             :class="$style.input"
-            ref="input"
             type="text"
             placeholder="關鍵字搜尋"
             v-model="keyword"
@@ -15,21 +14,24 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+
 export default {
-    name: "SearchBar",
-    data() {
+    name: "SideMenuSearchBar",
+    setup() {
+        const store = useStore();
+
+        const isFocus = ref(false);
+
+        const keyword = computed({
+            get: () => store.state.keyword,
+            set: (value) => store.commit("setKeyword", value),
+        });
+
         return {
-            isFocus: false,
-        }
-    },
-    computed: {
-        keyword:{
-            get(){
-                return this.$store.state.keyword;
-            },
-            set(val){
-                this.$store.commit("setKeyword", val);
-            }
+            isFocus,
+            keyword,
         }
     },
 };

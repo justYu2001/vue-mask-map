@@ -13,7 +13,7 @@
             />
         </div>
         <div :class="$style.search">
-            <SearchBar />
+            <SideMenuSearchBar />
         </div>
         <ul :class="$style['pharmacy-list']">
             <li
@@ -42,11 +42,11 @@
 
 <script>
 import SideMenuDropDown from "@/components/SideMenuDropDown.vue";
-import SearchBar from "@/components/SearchBar.vue";
+import SideMenuSearchBar from "@/components/SideMenuSearchBar.vue";
 
 import "@/assets/images/search.svg";
 
-import { ref, computed, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useStore } from 'vuex';
 
 
@@ -54,7 +54,7 @@ export default {
     name: "SideMenu",
     components: {
         SideMenuDropDown,
-        SearchBar,
+        SideMenuSearchBar,
     },
     emits: ["tiggerMarkerPopup"],
     setup(props, { emit }) {
